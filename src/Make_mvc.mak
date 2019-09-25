@@ -208,6 +208,9 @@ OBJDIR = $(OBJDIR)Z
 !ifdef USE_MSVCRT
 OBJDIR = $(OBJDIR)V
 !endif
+!ifdef DARKMODE_W32
+OBJDIR = $(OBJDIR)K
+!endif
 !if "$(DEBUG)" == "yes"
 OBJDIR = $(OBJDIR)d
 !endif
@@ -433,6 +436,12 @@ DIRECTX_INCL	= gui_dwrite.h
 DIRECTX_OBJ	= $(OUTDIR)\gui_dwrite.obj
 ! endif
 
+# Win32 DarkMode
+! if "$(DARKMODE_W32)" == "yes"
+DARKMODE_W32_DEFS	= -DFEAT_DARKMODE_W32
+DARKMODE_W32_LIB	= Dwmapi.lib
+! endif
+
 # Only allow XPM for a GUI build.
 ! ifndef XPM
 !  ifndef USE_MSVCRT
@@ -496,6 +505,7 @@ CON_LIB = $(CON_LIB) /DELAYLOAD:comdlg32.dll /DELAYLOAD:ole32.dll DelayImp.lib
 CFLAGS = -c /W3 /GF /nologo -I. -Iproto -DHAVE_PATHDEF -DWIN32 -DHAVE_STDINT_H \
 		$(CSCOPE_DEFS) $(TERM_DEFS) $(SOUND_DEFS) $(NETBEANS_DEFS) $(CHANNEL_DEFS) \
 		$(NBDEBUG_DEFS) $(XPM_DEFS) $(SOD_DEFS) $(SOD_INC) \
+		$(DARKMODE_W32_DEFS) \
 		$(DEFINES) -DWINVER=$(WINVER) -D_WIN32_WINNT=$(WINVER) \
 		/source-charset:utf-8
 
@@ -799,7 +809,7 @@ GUI_OBJ = \
 	$(OUTDIR)\gui_beval.obj \
 	$(OUTDIR)\gui_w32.obj
 GUI_LIB = \
-	version.lib $(IME_LIB) winspool.lib comctl32.lib
+	version.lib $(IME_LIB) $(DARKMODE_W32_LIB) winspool.lib comctl32.lib
 !else
 SUBSYSTEM = console
 CUI_INCL = iscygpty.h
