@@ -59,6 +59,9 @@ GUI=yes
 # MinGW-w64 is needed, and ARCH should be set to i686 or x86-64.
 DIRECTX=yes
 
+# set to yes to enable Windows dark mode (EXPERIMENTAL).
+DARKMODE_W32=yes
+
 # Disable Color emoji support
 # (default is yes if DIRECTX=yes, requires WinSDK 8.1 or later.)
 #COLOR_EMOJI=no
@@ -669,6 +672,13 @@ endif
 
 ifeq ($(SODIUM),yes)
 SODIUMLIB = -lsodium
+endif
+
+ifeq ($(DARKMODE_W32),yes)
+ ifeq (yes, $(GUI))
+DEFINES += -DFEAT_DARKMODE_W32
+LIB += -ldwmapi
+ endif
 endif
 
 # Only allow XPM for a GUI build.

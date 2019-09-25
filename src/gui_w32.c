@@ -336,6 +336,12 @@ static WNDPROC		s_tabline_wndproc = NULL;
 static int		showing_tabline = 0;
 #endif
 
+#ifdef FEAT_DARKMODE_W32
+#include <dwmapi.h>
+static void set_titlebar_dark(HWND hwnd);
+#endif
+
+
 static WPARAM		s_wParam = 0;
 static LPARAM		s_lParam = 0;
 
@@ -5336,6 +5342,10 @@ gui_mch_init(void)
 
     if (s_hwnd == NULL)
 	return FAIL;
+#ifdef FEAT_DARKMODE_W32
+    else
+	set_titlebar_dark(s_hwnd);
+#endif
 
 #ifdef GLOBAL_IME
     global_ime_init(atom, s_hwnd);
@@ -5477,6 +5487,37 @@ theend:
 
     return OK;
 }
+
+#ifdef FEAT_DARKMODE_W32
+typedef enum
+{
+    Default,
+    AllowDark,
+    ForceDark,
+    ForceLight,
+    Max
+} PreferredAppMode;
+
+typedef BOOL (WINAPI *fnAllowDarkModeForWindow)(HWND hWnd, BOOL allow);
+typedef PreferredAppMode (WINAPI *fnSetPreferredAppMode)(PreferredAppMode appMode);
+
+/*
+ * Use dark mode titlebar.
+ */
+    static void
+set_titlebar_dark(HWND hwnd)
+{
+    HMODULE hUxtheme = LoadLibraryExW(L"uxtheme.dll", NULL, LOAD_LIBRARY_SEARCH_SYSTEM32);
+    fnAllowDarkModeForWindow AllowDarkModeForWindow
+	= (fnAllowDarkModeForWindow)(GetProcAddress(hUxtheme, MAKEINTRESOURCEA(133)));
+    fnSetPreferredAppMode SetPreferredAppMode
+	= (fnSetPreferredAppMode)(GetProcAddress(hUxtheme, MAKEINTRESOURCEA(135)));
+    SetPreferredAppMode(AllowDark);
+    BOOL dark = TRUE;
+    AllowDarkModeForWindow(hwnd, dark);
+    DwmSetWindowAttribute(hwnd, 19, &dark, sizeof(dark));
+}
+#endif
 
 /*
  * Get the size of the screen, taking position on multiple monitors into
