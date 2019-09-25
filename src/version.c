@@ -194,6 +194,11 @@ static char *(features[]) =
 #else
 	"-cursorshape",
 #endif
+#ifdef FEAT_DARKMODE_W32
+	"+darkmode_w32",
+#else
+	"-darkmode_w32",
+#endif
 #if defined(FEAT_CON_DIALOG) && defined(FEAT_GUI_DIALOG)
 	"+dialog_con_gui",
 #else
