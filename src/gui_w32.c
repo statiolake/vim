@@ -5813,8 +5813,8 @@ im_set_position(int row, int col)
 	COMPOSITIONFORM	cfs;
 
 	cfs.dwStyle = CFS_POINT;
-	cfs.ptCurrentPos.x = FILL_X(col);
-	cfs.ptCurrentPos.y = FILL_Y(row);
+	cfs.ptCurrentPos.x = TEXT_X(col);
+	cfs.ptCurrentPos.y = TEXT_Y(row);
 	MapWindowPoints(s_textArea, s_hwnd, &cfs.ptCurrentPos, 1);
 	if (s_process_dpi_aware == DPI_AWARENESS_UNAWARE)
 	{
@@ -6323,8 +6323,8 @@ gui_mch_draw_string(
 	// When p_linespace is 0, overwrite the bottom row of pixels.
 	// Otherwise put the line just below the character.
 	y = FILL_Y(row + 1) - 1;
-	if (p_linespace > 1)
-	    y -= p_linespace - 1;
+	if ((p_linespace / 2) > 1)
+	    y -= (p_linespace / 2) - 1;
 	draw_line(FILL_X(col), y, FILL_X(col + len), y, gui.currFgColor);
     }
 

@@ -79,7 +79,8 @@
  */
 #ifdef FEAT_GUI_MSWIN
 # define TEXT_X(col)	((col) * gui.char_width)
-# define TEXT_Y(row)	((row) * gui.char_height + gui.char_ascent)
+# define TEXT_Y(row)	((row) * gui.char_height + gui.char_ascent \
+							+ (p_linespace / 2))
 # define FILL_X(col)	((col) * gui.char_width)
 # define FILL_Y(row)	((row) * gui.char_height)
 # define X_2_COL(x)	((x) / gui.char_width)
